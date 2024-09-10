@@ -1,4 +1,3 @@
-/*
 import mongoose, { Schema } from 'mongoose';
 
 const feedingSchema = new Schema(
@@ -16,5 +15,3 @@ const feedingSchema = new Schema(
 
 const Feeding = mongoose.models.Feeding || mongoose.model("Feeding", feedingSchema)
 export default Feeding
-
-*/

@@ -1,14 +1,16 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { AuthContext } from '../services/AuthContext';
+import { useDispatch } from 'react-redux';
+import { login } from '../features/authSlice';
 import GoogleLogin from '../components/GoogleLogin';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
-    const { login } = useContext(AuthContext);
+    const dispatch = useDispatch();
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -18,32 +20,31 @@ const Login = () => {
             return;
         }
 
+        setIsLoading(true);
+
         try {
             const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/v1/login`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
             });
 
+            const data = await response.json();
             if (!response.ok) {
-                const { message } = await response.json();
-                setError(message || 'Credenziali invalide.');
+                setError(data.message || 'Credenziali invalide.');
                 return;
             }
 
-            const data = await response.json();
-
             if (data.accessToken) {
-                login(data.accessToken);
+                dispatch(login(data.accessToken));
                 navigate('/home');
             } else {
                 setError('Login errato. Token non ricevuto.');
             }
         } catch (err) {
-            console.error('errore Login:', err);
-            setError('Errori, riprovare più tardi.');
+            setError('Errore di rete, riprovare più tardi.');
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -68,11 +69,12 @@ const Login = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                 />
-                <button type="submit" className="btn btn-primary btn-block">Login</button>
+                <button type="submit" className="btn btn-primary btn-block" disabled={isLoading}>
+                    {isLoading ? 'Caricamento...' : 'Login'}
+                </button>
             </form>
             <p className="mt-3">Non hai un account? <Link to="/register">Registrati</Link></p>
             <GoogleLogin />
-
         </div>
     );
 };

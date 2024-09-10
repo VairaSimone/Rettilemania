@@ -1,3 +1,4 @@
+// GoogleLogin.js
 import React from 'react';
 
 const GoogleLogin = () => {

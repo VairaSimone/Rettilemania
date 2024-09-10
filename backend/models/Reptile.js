@@ -1,4 +1,3 @@
-/*
 import mongoose, { Schema } from 'mongoose';
 
 const reptileSchema = new Schema(
@@ -52,5 +51,3 @@ const reptileSchema = new Schema(
 
 const Reptile = mongoose.models.Reptile || mongoose.model("Reptile", reptileSchema)
 export default Reptile
-
-*/

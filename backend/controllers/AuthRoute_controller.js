@@ -4,7 +4,6 @@ import jwt from "jsonwebtoken";
 import { body, validationResult } from 'express-validator';
 import RevokedToken from '../models/RevokedToken.js';
 
-
 const generateAccessToken = (user) => {
     return jwt.sign({ userid: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '15m' });
 };
@@ -16,24 +15,22 @@ const generateRefreshToken = (user) => {
 export const login = async (req, res) => {
     try {
         const user = await User.findOne({ email: req.body.email });
-        if (!user) return res.status(401).send("Credenziali sbagliate");
+        if (!user) return res.status(401).json({ message: "Email non registrata" });
 
         const validPassword = await bcrypt.compare(req.body.password, user.password);
-        if (!validPassword) return res.status(401).send("Credenziali sbagliate");
+        if (!validPassword) return res.status(401).json({ message: "Password errata" });
 
         const accessToken = generateAccessToken(user);
         const refreshToken = generateRefreshToken(user);
 
-        // Salviamo il refresh token nel DB
         user.refreshToken = refreshToken;
         await user.save();
 
-        // Mandiamo il refresh token in un cookie HttpOnly e l'access token nel corpo della risposta
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production', // Solo HTTPS in produzione
+            secure: process.env.NODE_ENV === 'production',
             sameSite: 'strict',
-            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 giorni
+            maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
         return res.json({ accessToken });
@@ -42,16 +39,12 @@ export const login = async (req, res) => {
     }
 };
 
-// Funzione di registrazione
 export const register = [
-    // Validazione dell'input
     body('email').isEmail().withMessage('Email non valida'),
     body('password').isLength({ min: 6 }).withMessage('La password deve essere di almeno 6 caratteri'),
     async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            console.log(errors)
-            console.log("email e password forniti " + req.body.email + req.body.password )
             return res.status(400).json({ errors: errors.array() });
         }
 
@@ -59,7 +52,7 @@ export const register = [
             const user = await User.findOne({ email: req.body.email });
             if (user) return res.status(409).send("Indirizzo email già utilizzato");
 
-            const hashedPassword = await bcrypt.hash(req.body.password, 12); 
+            const hashedPassword = await bcrypt.hash(req.body.password, 12);
             const newUser = new User({
                 name: req.body.name,
                 email: req.body.email,
@@ -75,7 +68,6 @@ export const register = [
     }
 ];
 
-// Funzione per ottenere i dati dell'utente autenticato
 export const getMe = async (req, res) => {
     try {
         const user = await User.findById(req.user.userid).select('-password');
@@ -86,7 +78,6 @@ export const getMe = async (req, res) => {
     }
 };
 
-
 export const logout = async (req, res) => {
     const token = req.cookies.refreshToken;
     if (!token) return res.status(400).json({ message: "Token non trovato" });
@@ -95,19 +86,16 @@ export const logout = async (req, res) => {
         const user = await User.findOne({ refreshToken: token });
         if (!user) return res.status(400).json({ message: "Token non valido" });
 
-        // Aggiungi il refresh token alla lista dei token revocati
         const decoded = jwt.decode(token);
         const revokedToken = new RevokedToken({
             token,
-            expiresAt: new Date(decoded.exp * 1000) // Scadenza del token
+            expiresAt: new Date(decoded.exp * 1000)
         });
         await revokedToken.save();
 
-        // Rimuovi il refresh token dall'utente
         user.refreshToken = null;
         await user.save();
 
-        // Rimuovi il cookie contenente il refresh token
         res.clearCookie('refreshToken', { httpOnly: true, sameSite: 'strict', secure: process.env.NODE_ENV === 'production' });
         return res.status(200).json({ message: "Logout effettuato con successo" });
     } catch (error) {
@@ -116,10 +104,8 @@ export const logout = async (req, res) => {
 };
 
 export const callBackGoogle = (req, res) => {
-    const token = req.user.jwtToken
-
-    if(!token)
-        return res.status(401).send("Autentificazione fallita")
+    const token = req.user.jwtToken;
+    if (!token) return res.status(401).send("Autenticazione fallita");
     
-    res.redirect(`${process.env.FRONTEND_URL}/login-google-callback?token=${token}`)
-}
+    res.redirect(`${process.env.FRONTEND_URL}/login-google-callback?token=${token}`);
+};
