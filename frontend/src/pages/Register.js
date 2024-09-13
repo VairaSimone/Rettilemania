@@ -16,17 +16,16 @@ const Register = () => {
             return;
         }
     
-        // Invia i dati come JSON
         const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/v1/register`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',  // Imposta il tipo di contenuto a JSON
+                'Content-Type': 'application/json',  
             },
             body: JSON.stringify({
                 name,
                 email,
                 password,
-            }),  // Trasforma i dati in formato JSON
+            }), 
         });
     
         if (response.ok) {

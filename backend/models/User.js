@@ -32,12 +32,12 @@ const userSchema = new Schema(
             default: Date.now
         },
         refreshToken: { type: String },
-        reptiles: [{ type: mongoose.Schema.Types.ObjectId, ref: "Reptile"}],
-        threads: [{ type: mongoose.Schema.Types.ObjectId, ref: "Thread"}],
-        posts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post"}]
+        reptiles: [{ type: mongoose.Schema.Types.ObjectId, ref: "Reptile" }],
+        threads: [{ type: mongoose.Schema.Types.ObjectId, ref: "ForumThread" }],
+        posts: [{ type: mongoose.Schema.Types.ObjectId, ref: "ForumPost" }]
     },
     {
-        collection: "user"
+        collection: "User"
     }
 )
 

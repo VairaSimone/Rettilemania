@@ -10,18 +10,21 @@ const reptileSchema = new Schema(
             type: String,
             required: true
         },
+        morph: {
+            type: String
+        },
         birthDate: {
             trype: Date
         },
-        user:{ type: mongoose.Schema.Types.ObjectId, ref: "user", required: true},
-        feddingHistory: { type: mongoose.Schema.Types.ObjectId, ref: "Feeding"},
+        user: { type: mongoose.Schema.Types.ObjectId, ref: "user", required: true },
+        feddingHistory: { type: mongoose.Schema.Types.ObjectId, ref: "Feeding" },
         growthRecords: [{
             date: {
                 type: Date,
                 required: true
             },
             weight: {
-                type: Number   
+                type: Number
             },
             length: {
                 type: Number
@@ -45,7 +48,7 @@ const reptileSchema = new Schema(
         }
     },
     {
-        collection: "reptile"
+        collection: "Reptile"
     }
 )
 

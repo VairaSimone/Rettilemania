@@ -8,6 +8,7 @@ import Home from './pages/Home';
 import NavBar from './components/NavBar';
 import Footer from './components/Footer';
 import { logout } from './features/authSlice';
+import Dashboard from './pages/Dashboard';
 
 function App() {
     const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -27,6 +28,7 @@ function App() {
                     <Route path="/register" element={!isAuthenticated ? <Register /> : <Navigate to="/home" />} />
                     <Route path="/home" element={isAuthenticated ? <Home /> : <Navigate to="/login" />} />
                     <Route path="/" element={<Navigate to="/home" />} />
+                    <Route path="/dashboard" element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />} />
                 </Routes>
             </div>
             {isAuthenticated && <Footer />}

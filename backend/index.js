@@ -22,10 +22,10 @@ app.use(express.json())
 app.use(morgan("dev"))
 app.use(helmet())
 passport.use("google", googleStrategy)
-//connessione al db
+
 mongoose
   .connect(process.env.MONGO_STRING)
-  .then(() => console.log("Database connesso"))
+  .then(() => console.log("Connected database"))
   .catch((err) => console.log(err))
 
 app.use("/api/v1/", authRouter)
@@ -34,5 +34,5 @@ app.use('/reptile', reptileRouter);
 
 
 app.listen(port, () => {
-  console.log(`Server is running on ${process.env.BACKEND_URL}`);
+  console.log(`Server is running on ${process.env.BACKEND_URL}:${process.env.PORT}`);
 });

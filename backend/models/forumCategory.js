@@ -1,4 +1,3 @@
-/*
 import mongoose, { Schema } from 'mongoose';
 
 const forumCategorySchema = new Schema(
@@ -8,11 +7,9 @@ const forumCategorySchema = new Schema(
         createdAt: { type: Date, default: Date.now }
     },
     {
-        collection: "forumCategory"
+        collection: "ForumCategory"
     }
 )
 
 const ForumCategory = mongoose.models.ForumCategory || mongoose.model("ForumCategory", forumCategorySchema)
-export default ForumCategory
-
-*/
+export default ForumCategoryS

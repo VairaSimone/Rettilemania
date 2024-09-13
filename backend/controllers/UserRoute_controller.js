@@ -53,29 +53,28 @@ export const PutUser = async (req, res) => {
 };
 
 export const DeleteUser = async (req, res) => {
-        try {
-            const user = await User.findById(req.params.userId);
-            if (!user) return res.status(404).json({ message: 'Utente non trovato' });
-    
-            // Aggiungi l'access token corrente dell'utente alla blacklist (revocato)
-            const token = req.header('Authorization')?.split(' ')[1]; // Ottieni il token dal header Authorization
-            if (token) {
-                const decoded = jwt.decode(token);
-                if (decoded) {
-                    const revokedToken = new RevokedToken({
-                        token,
-                        expiresAt: new Date(decoded.exp * 1000) // Scadenza del token
-                    });
-                    await revokedToken.save();
-                }
+    try {
+        const user = await User.findById(req.params.userId);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        // Add the user's current access token to the blacklist (revoked)
+        const token = req.header('Authorization')?.split(' ')[1];
+        if (token) {
+            const decoded = jwt.decode(token);
+            if (decoded) {
+                const revokedToken = new RevokedToken({
+                    token,
+                    expiresAt: new Date(decoded.exp * 1000)
+                });
+                await revokedToken.save();
             }
-    
-            // Elimina l'utente dal database
-            await User.findByIdAndDelete(req.params.userId)
-            return res.status(200).json({ message: "Utente eliminato con successo" });
-        } catch (error) {
-            console.log(error)
-            return res.status(500).json({ message: "Errore del server" });
         }
-    };
+
+        await User.findByIdAndDelete(req.params.userId)
+        return res.status(200).json({ message: "User successfully deleted" });
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: "Server error" });
+    }
+};
 

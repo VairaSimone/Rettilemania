@@ -7,7 +7,7 @@ const userRouter = express.Router();
 userRouter.get('/', authenticateJWT, userController.GetAllUser);
 userRouter.get('/:userId', authenticateJWT, userController.GetIDUser);
 userRouter.put("/:userId", authenticateJWT, userController.PutUser);
-userRouter.delete('/:userId', authenticateJWT, userController.DeleteUser); 
+userRouter.delete('/:userId', authenticateJWT, userController.DeleteUser);
 
 
 export default userRouter;

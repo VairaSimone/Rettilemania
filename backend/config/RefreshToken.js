@@ -1,48 +1,48 @@
-import RevokedToken from '../models/RevokedToken.js'; // Importa il modello dei token revocati
+import RevokedToken from '../models/RevokedToken.js';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 
+//Refresh Token Management. Requests an Access Token if expired and saves the Refresh Token in cookies
 export const refreshToken = async (req, res) => {
     const token = req.cookies.refreshToken;
-    if (!token) return res.status(403).json({ message: "Refresh token mancante" });
+    if (!token) return res.status(403).json({ message: "Refresh token missing" });
 
     try {
-        // Verifica se il refresh token è stato revocato
         const isRevoked = await RevokedToken.findOne({ token });
-        if (isRevoked) return res.status(403).json({ message: "Token revocato" });
+        if (isRevoked) return res.status(403).json({ message: "Token Revoked" });
 
         const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
         const user = await User.findById(decoded.userid);
         if (!user || user.refreshToken !== token) {
-            return res.status(403).json({ message: "Token non valido" });
+            return res.status(403).json({ message: "Invalid token" });
         }
 
         const newAccessToken = generateAccessToken(user);
         const newRefreshToken = generateRefreshToken(user);
 
-        // Aggiorna il refresh token nel DB
+        // Update the refresh token in the DB
         user.refreshToken = newRefreshToken;
         await user.save();
 
-        // Aggiungi il vecchio refresh token alla lista dei token revocati
+        // Add the old refresh token to the list of revoked tokens
         if (!isRevoked && decoded.exp * 1000 > Date.now()) {
             const revokedToken = new RevokedToken({
                 token,
-                expiresAt: new Date(decoded.exp * 1000) // Scadenza del token
+                expiresAt: new Date(decoded.exp * 1000)
             });
             await revokedToken.save();
 
         }
-        // Invia il nuovo refresh token e access token
+        // Send the new refresh token and access token
         res.cookie('refreshToken', newRefreshToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'strict',
-            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 giorni
+            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 day
         });
 
         return res.json({ accessToken: newAccessToken });
     } catch (error) {
-        return res.status(403).json({ message: "Token non valido o scaduto" });
+        return res.status(403).json({ message: "Invalid or expired token" });
     }
 };

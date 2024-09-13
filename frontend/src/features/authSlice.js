@@ -1,9 +1,9 @@
-// features/authSlice.js (non necessita modifiche, solo per riferimento)
+// redux auth
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  token: localStorage.getItem('token') || null,
-  isAuthenticated: !!localStorage.getItem('token'),
+  token: localStorage.getItem('AccesToken') || null,
+  isAuthenticated: !!localStorage.getItem('AccessToken'),
 };
 
 const authSlice = createSlice({
@@ -13,12 +13,12 @@ const authSlice = createSlice({
     login: (state, action) => {
       state.token = action.payload;
       state.isAuthenticated = true;
-      localStorage.setItem('token', action.payload);
+      localStorage.setItem('AccesToken', action.payload);
     },
     logout: (state) => {
       state.token = null;
       state.isAuthenticated = false;
-      localStorage.removeItem('token');
+      localStorage.removeItem('AccesToken');
     },
   },
 });

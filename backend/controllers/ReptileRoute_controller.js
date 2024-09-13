@@ -47,13 +47,13 @@ export const GetAllReptileByUser = async (req, res) => {
         const reptile = await Reptile.find({ user: userId });
 
         if (!reptile || reptile.length === 0) {
-            return res.status(404).send({ message: `Nessun rettile trovato per questa persona ${userId}` });
+            return res.status(404).send({ message: `No reptiles found for this person ${userId}` });
         }
 
         res.send(reptile);
     } catch (err) {
         console.log(err);
-        res.status(500).send({ message: 'Errore del server' });
+        res.status(500).send({ message: 'Server error' });
     }
 };
 
@@ -63,7 +63,7 @@ export const PostReptile = async (req, res) => {
         const reptile = req.body;
 
         if (reptile.comments && !Array.isArray(reptile.comments)) {
-            return res.status(400).send({ message: 'Il campo comments deve essere un array.' });
+            return res.status(400).send({ message: 'The comments field must be an array.' });
         }
 
         reptile.comments = reptile.comments || [];
@@ -76,7 +76,7 @@ export const PostReptile = async (req, res) => {
         res.status(201).send(createdReptile);
     } catch (error) {
         console.log(error);
-        res.status(400).send({ message: 'Errore nella creazione del rettile' });
+        res.status(400).send({ message: 'Error creating reptile' });
     }
 };
 
@@ -97,10 +97,10 @@ export const DeleteReptile = async (req, res) => {
     try {
         const id = req.params.reptileId;
         await Reptile.findByIdAndDelete(id);
-        res.send({ message: 'Rettile eliminato' });
+        res.send({ message: 'Reptile eliminated' });
     } catch (err) {
         console.log(err);
-        res.status(500).send({ message: 'Errore del server' });
+        res.status(500).send({ message: 'Server error' });
     }
-    };
+};
 

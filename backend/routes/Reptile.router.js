@@ -9,7 +9,7 @@ reptileRouter.get('/:reptileId', authenticateJWT, reptileController.GetIDReptile
 reptileRouter.get('/:userId/AllReptile', authenticateJWT, reptileController.GetAllReptileByUser);
 reptileRouter.post("/", authenticateJWT, reptileController.PostReptile);
 reptileRouter.put("/:reptileId", authenticateJWT, reptileController.PutReptile);
-reptileRouter.delete('/:reptileId', authenticateJWT, reptileController.DeleteReptile); 
+reptileRouter.delete('/:reptileId', authenticateJWT, reptileController.DeleteReptile);
 
 
 export default reptileRouter;

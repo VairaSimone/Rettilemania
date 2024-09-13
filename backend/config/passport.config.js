@@ -2,6 +2,7 @@ import GoogleStrategy from "passport-google-oauth20";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 
+//Google strategy for access
 const googleStrategy = new GoogleStrategy({
     clientID: process.env.GOOGLE_ID,
     clientSecret: process.env.GOOGLE_SECRET,
@@ -28,12 +29,12 @@ const googleStrategy = new GoogleStrategy({
 
         const jwtToken = jwt.sign({ userid: user._id }, process.env.JWT_SECRET, {
             expiresIn: "1w",
-            algorithm: "HS256" // Valutare l'uso di RS256 per maggiore sicurezza
+            algorithm: "HS256"
         });
 
         return passportNext(null, { jwtToken });
     } catch (err) {
-        console.error("Errore durante l'autenticazione Google:", err);
+        console.error("Google Authentication Error: ", err);
         return passportNext(err, null);
     }
 });
