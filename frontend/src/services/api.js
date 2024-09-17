@@ -1,39 +1,48 @@
 import axios from 'axios';
-import { useDispatch } from 'react-redux';
-import { login, logout } from '../features/authSlice';
+import { store } from '../config/store';  
+import { loginUser, logoutUser } from '../features/userSlice';
 
 const api = axios.create({
     baseURL: process.env.REACT_APP_BACKEND_URL,
 });
 
-// Interceptor to intercept 401 (expired token) responses
-api.interceptors.response.use(
-    response => response,
-    async (error) => {
-        const dispatch = useDispatch();
+api.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem('token')
+        if (token) {
+            config.headers['Authorization'] = `Bearer ${token}`;  
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
 
+api.interceptors.response.use(
+    response => response,  
+    async (error) => {
         const originalRequest = error.config;
 
         if (error.response.status === 401 && !originalRequest._retry) {
-            originalRequest._retry = true;
+            originalRequest._retry = true; 
+
             try {
-                // Make a request to get a new access token
                 const { data } = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/v1/refresh-token`, null, {
-                    withCredentials: true, // This sends the HttpOnly cookie with the refresh token
+                    withCredentials: true,  
                 });
 
                 if (data.accessToken) {
-                    dispatch(login(data.accessToken));
+                    store.dispatch(loginUser(data.accessToken));
                     localStorage.setItem('token', data.accessToken);
 
-                    // Update the Authorization header for the original request and retry it
                     originalRequest.headers['Authorization'] = `Bearer ${data.accessToken}`;
                     return api(originalRequest);
                 }
             } catch (refreshError) {
-                dispatch(logout());
+                store.dispatch(logoutUser());
                 localStorage.removeItem('token');
-                window.location.href = '/login';
+                window.location.href = '/login'
             }
         }
 

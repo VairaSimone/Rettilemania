@@ -1,39 +1,67 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { loginUser, selectUser } from './features/userSlice';
+import axios from 'axios';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import GoogleCallback from './pages/GoogleCallback';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Home from './pages/Home';
-import NavBar from './components/NavBar';
+import GoogleCallback from './pages/GoogleCallback';
+import ProtectedRoute from './components/ProtectedRoute';
+import NavBar from './components/Navbar';
 import Footer from './components/Footer';
-import { logout } from './features/authSlice';
-import Dashboard from './pages/Dashboard';
+import UserProfile from './pages/UserProfile';
 
 function App() {
-    const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-    const dispatch = useDispatch();
+  const dispatch = useDispatch()
+  const user = useSelector(selectUser);  
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/v1/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        dispatch(loginUser(res.data));  
+      })
+      .catch((err) => {
+        console.error('Errore nel recupero dei dati utente:', err);
+        localStorage.removeItem('token');  
+      });
+    }
+  }, [dispatch]);
 
-    const handleLogout = () => {
-        dispatch(logout());
-    };
+  return (
+    <Router>
+      <Routes>
+        <Route
+          path="/"
+          element={user ? <Navigate to="/home" /> : <Navigate to="/login" />} 
+        />
 
-    return (
-        <Router>
-            {isAuthenticated && <NavBar onLogout={handleLogout} />}
-            <div className="content">
-                <Routes>
-                    <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to="/home" />} />
-                    <Route path="/login-google-callback" element={<GoogleCallback />} />
-                    <Route path="/register" element={!isAuthenticated ? <Register /> : <Navigate to="/home" />} />
-                    <Route path="/home" element={isAuthenticated ? <Home /> : <Navigate to="/login" />} />
-                    <Route path="/" element={<Navigate to="/home" />} />
-                    <Route path="/dashboard" element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />} />
-                </Routes>
-            </div>
-            {isAuthenticated && <Footer />}
-        </Router>
-    );
+        <Route path="/login" element={<Login />} />
+
+        <Route path="/register" element={<Register />} />
+
+        <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
+
+        <Route
+          path="/home"
+          element={
+            <ProtectedRoute>
+              <NavBar></NavBar>
+              <Home />
+              <Footer></Footer>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path="/login-google-callback" element={<GoogleCallback />} />
+      </Routes>
+    </Router>
+  );
 }
 
 export default App;

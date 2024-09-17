@@ -1,15 +1,18 @@
-// NavBar.js
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { logout } from '../features/authSlice';
-import { Link } from 'react-router-dom';
+import { logoutUser } from '../features/userSlice';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 const NavBar = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const handleLogout = () => {
-        dispatch(logout());
+        localStorage.removeItem('token');
+        dispatch(logoutUser());
+        navigate('/login');
+
     };
 
     return (
@@ -25,10 +28,10 @@ const NavBar = () => {
                             <Link className="nav-link" to="/">Home</Link>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link" to="/about">Chi siamo</Link>
+                            <Link className="nav-link" to="/dashboard">Dashboard</Link>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link" to="/services">Servizi</Link>
+                            <Link className="nav-link" to="/profile">Profilo</Link>
                         </li>
                         <li className="nav-item">
                             <Link className="nav-link" to="/contact">Contatti</Link>
