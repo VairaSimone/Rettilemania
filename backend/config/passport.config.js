@@ -10,22 +10,39 @@ const googleStrategy = new GoogleStrategy({
 }, async function (accessToken, refreshToken, profile, passportNext) {
     const { name, email, sub: googleId } = profile._json;
 
+    console.log("Profile _json:", profile._json);  
+    console.log("Estratto - Email:", email);       
+
     try {
+        if (!email) {
+            console.error("Email is missing");
+            return passportNext(new Error("Email is required for Google authentication"), null);
+        }
+
+        // Verifica se l'utente esiste nel DB
         let user = await User.findOne({ email });
 
         if (user) {
+            console.log("Utente trovato:", user);
             if (!user.googleId) {
                 user.googleId = googleId;
-                user = await user.save();
+            }
+            if (refreshToken) {
+                user.refreshToken = refreshToken;
             }
         } else {
+            // Creazione di un nuovo utente con i campi richiesti
             user = new User({
                 googleId,
-                name,
-                email,
+                name: name || "Nome Sconosciuto",
+                email: email,                
+                refreshToken: refreshToken || null,
             });
-            user = await user.save();
         }
+        console.log("User object before save:", user);
+
+        // Salva l'utente con il campo email già presente
+        await user.save();
 
         const jwtToken = jwt.sign({ userid: user._id }, process.env.JWT_SECRET, {
             expiresIn: "1w",

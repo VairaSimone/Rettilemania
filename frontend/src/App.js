@@ -10,11 +10,13 @@ import GoogleCallback from './pages/GoogleCallback';
 import ProtectedRoute from './components/ProtectedRoute';
 import NavBar from './components/Navbar';
 import Footer from './components/Footer';
-import UserProfile from './pages/UserProfile';
+import UserProfile from './components/UserProfile';
+import Notifications from './components/Notifications';
+import ReptileDetails from './components/ReptileDetails';
 
 function App() {
   const dispatch = useDispatch()
-  const user = useSelector(selectUser);  
+  const user = useSelector(selectUser);
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -23,13 +25,13 @@ function App() {
           Authorization: `Bearer ${token}`,
         },
       })
-      .then((res) => {
-        dispatch(loginUser(res.data));  
-      })
-      .catch((err) => {
-        console.error('Errore nel recupero dei dati utente:', err);
-        localStorage.removeItem('token');  
-      });
+        .then((res) => {
+          dispatch(loginUser(res.data));
+        })
+        .catch((err) => {
+          console.error('Error fetching user data:', err);
+          localStorage.removeItem('token');
+        });
     }
   }, [dispatch]);
 
@@ -38,7 +40,7 @@ function App() {
       <Routes>
         <Route
           path="/"
-          element={user ? <Navigate to="/home" /> : <Navigate to="/login" />} 
+          element={user ? <Navigate to="/home" /> : <Navigate to="/login" />}
         />
 
         <Route path="/login" element={<Login />} />
@@ -46,7 +48,8 @@ function App() {
         <Route path="/register" element={<Register />} />
 
         <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
-
+        <Route path="/notifications" element={<Notifications userId="USER_ID" />} />
+        <Route path="/reptiles/:reptileId" element={<ProtectedRoute><ReptileDetails /></ProtectedRoute>} />
         <Route
           path="/home"
           element={

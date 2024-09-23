@@ -12,4 +12,4 @@ const forumCategorySchema = new Schema(
 )
 
 const ForumCategory = mongoose.models.ForumCategory || mongoose.model("ForumCategory", forumCategorySchema)
-export default ForumCategoryS
+export default ForumCategory

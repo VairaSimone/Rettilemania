@@ -14,11 +14,10 @@ const UserProfile = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Funzione per recuperare i dati dell'utente al caricamento del componente
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const { data } = await api.get('/api/v1/me');  // Chiamata API per ottenere i dati dell'utente
+        const { data } = await api.get('/api/v1/me');
         setUser(data);
         setName(data.name);
         setEmail(data.email);
@@ -31,30 +30,28 @@ const UserProfile = () => {
     fetchUserData();
   }, []);
 
-  // Funzione per aggiornare i dati utente
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
     try {
       const { data } = await api.put(`/user/${user._id}`, {
         name,
         email,
-        password,  // Solo se cambiato
+        password,
         avatar,
       });
-      setUser(data);  // Aggiorna i dati visualizzati
-      setError('');  // Rimuovi eventuali errori
+      setUser(data);
+      setError('');
     } catch (err) {
       setError('Errore nell\'aggiornamento del profilo');
     }
   };
 
-  // Funzione per eliminare l'account utente
   const handleDeleteAccount = async () => {
     try {
       await api.delete(`/user/${user._id}`);
-      dispatch(logoutUser());  // Effettua il logout
-      localStorage.removeItem('token');  // Rimuovi il token dal localStorage
-      navigate('/login');  // Reindirizza alla pagina di login
+      dispatch(logoutUser());
+      localStorage.removeItem('token');
+      navigate('/login');
     } catch (err) {
       setError('Errore durante l\'eliminazione dell\'account');
     }
@@ -65,9 +62,9 @@ const UserProfile = () => {
   }
 
   return (
-    
+
     <div className="container">
-        <Link className="nav-link" to="/home">Torna indietro</Link>
+      <Link className="nav-link" to="/home">Torna indietro</Link>
 
       <h2>Profilo Utente</h2>
 

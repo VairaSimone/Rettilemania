@@ -86,29 +86,85 @@ export const logout = async (req, res) => {
     if (!token) return res.status(400).json({ message: "Token not found" });
 
     try {
+        // Trova l'utente con il token di refresh
         const user = await User.findOne({ refreshToken: token });
         if (!user) return res.status(400).json({ message: "Invalid token" });
 
+        // Decodifica il token correttamente
         const decoded = jwt.decode(token);
+        if (!decoded) return res.status(400).json({ message: "Invalid token decoding" });
+
+        // Aggiungi il token alla lista dei token revocati
         const revokedToken = new RevokedToken({
             token,
-            expiresAt: new Date(decoded.exp * 1000)
+            expiresAt: new Date(decoded.exp * 1000) // Usa il valore corretto per l'exp
         });
         await revokedToken.save();
 
+        // Rimuovi il refresh token dall'utente
         user.refreshToken = null;
         await user.save();
 
-        res.clearCookie('refreshToken', { httpOnly: true, sameSite: 'strict', secure: process.env.NODE_ENV === 'production' });
+        // Cancella il cookie di refreshToken dal client
+        res.clearCookie('refreshToken', { 
+            httpOnly: true, 
+            sameSite: 'strict', 
+            secure: process.env.NODE_ENV === 'production' 
+        });
+
         return res.status(200).json({ message: "Logout successful" });
     } catch (error) {
+        console.error(error);
         return res.status(500).json({ message: "Server Error" });
     }
 };
 
-export const callBackGoogle = (req, res) => {
+export const callBackGoogle = async (req, res) => {
+  try {
+    // Estrai il token JWT generato per l'utente
     const token = req.user.jwtToken;
     if (!token) return res.status(401).send("Authentication failed");
 
+    // Estrai il profilo di Google dall'oggetto req.user
+    const { email, googleId, name } = req.user; // Assumi che req.user contenga email e googleId
+
+    // Trova l'utente nel database usando l'email o googleId
+    let user = await User.findOne({ email });
+
+    // Se l'utente non esiste, creane uno nuovo
+    if (!user) {
+      user = new User({
+        email,
+        name: name || "sconosciuto",
+        googleId,
+      });
+
+      await user.save();
+    }
+
+    // Genera un refresh token per l'utente
+    const generateRefreshToken = (user) => {
+      return jwt.sign({ userid: user.id }, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' });
+    };
+
+    const refreshToken = generateRefreshToken(user);
+
+    // Salva il refresh token nell'utente
+    user.refreshToken = refreshToken;
+    await user.save();
+
+    // Imposta il refresh token nel cookie
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 giorni
+    });
+
+    // Reindirizza l'utente al frontend con il token
     res.redirect(`${process.env.FRONTEND_URL}/login-google-callback?token=${token}`);
+  } catch (err) {
+    console.error("Google Authentication Error:", err);
+    res.status(500).send("Server Error");
+  }
 };

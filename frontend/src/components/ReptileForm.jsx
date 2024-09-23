@@ -25,7 +25,7 @@ const ReptileForm = ({ setReptiles }) => {
             setSpecies('');
             setMorph('');
         } catch (err) {
-            console.error('Errore nella creazione del rettile:', err);
+            console.error('Error creating reptile:', err);
         }
     };
 

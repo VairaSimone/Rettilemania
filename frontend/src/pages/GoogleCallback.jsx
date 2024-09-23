@@ -19,17 +19,18 @@ const GoogleCallback = () => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        withCredentials: true,
       })
-      .then((res) => {
-        dispatch(loginUser(res.data));
-        navigate('/home');  
-      })
-      .catch((err) => {
-        console.error('Errore nel recupero dei dati utente:', err);
-        alert('Errore nel recupero dei dati utente.');
-      });
+        .then((res) => {
+          dispatch(loginUser(res.data));
+          navigate('/home');
+        })
+        .catch((err) => {
+          console.error('Error fetching user data:', err);
+          alert('Error retrieving user data.');
+        });
     } else {
-      console.error('Token non trovato');
+      console.error('Token not found');
     }
   }, [navigate, dispatch]);
 

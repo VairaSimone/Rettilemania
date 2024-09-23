@@ -13,6 +13,9 @@ const reptileSchema = new Schema(
         morph: {
             type: String
         },
+        image: {
+            type: String
+        },
         birthDate: {
             trype: Date
         },
@@ -21,7 +24,6 @@ const reptileSchema = new Schema(
         growthRecords: [{
             date: {
                 type: Date,
-                required: true
             },
             weight: {
                 type: Number

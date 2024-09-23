@@ -1,4 +1,7 @@
 import User from "../models/User.js";
+import Reptile from "../models/Reptile.js";
+import Feeding from "../models/Feeding.js";
+import Notification from "../models/Notification.js";
 import RevokedToken from "../models/RevokedToken.js";
 import jwt from "jsonwebtoken";
 
@@ -54,27 +57,38 @@ export const PutUser = async (req, res) => {
 
 export const DeleteUser = async (req, res) => {
     try {
-        const user = await User.findById(req.params.userId);
+        const userId = req.params.userId;
+        const user = await User.findById(userId);
         if (!user) return res.status(404).json({ message: 'User not found' });
 
-        // Add the user's current access token to the blacklist (revoked)
+        const reptiles = await Reptile.find({ user: userId });
+
+        for (const reptile of reptiles) {
+            await Feeding.deleteMany({ reptile: reptile._id });
+            await Notification.deleteMany({ reptile: reptile._id });
+        }
+
+        await Reptile.deleteMany({ user: userId });
+
+        await Notification.deleteMany({ user: userId });
+
+        await User.findByIdAndDelete(userId);
+
         const token = req.header('Authorization')?.split(' ')[1];
         if (token) {
             const decoded = jwt.decode(token);
             if (decoded) {
                 const revokedToken = new RevokedToken({
                     token,
-                    expiresAt: new Date(decoded.exp * 1000)
+                    expiresAt: new Date(decoded.exp * 1000),
                 });
                 await revokedToken.save();
             }
         }
 
-        await User.findByIdAndDelete(req.params.userId)
-        return res.status(200).json({ message: "User successfully deleted" });
+        return res.status(200).json({ message: 'User and associated data successfully deleted' });
     } catch (error) {
-        console.log(error)
-        return res.status(500).json({ message: "Server error" });
+        console.log(error);
+        return res.status(500).json({ message: 'Server error' });
     }
 };
-

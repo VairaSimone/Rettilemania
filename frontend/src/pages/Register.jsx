@@ -19,6 +19,11 @@ const Register = () => {
     }
   };
 
+  const handleGoogleLogin = () => {
+    window.location.href = `${process.env.REACT_APP_BACKEND_URL}/api/v1/login-google`;
+  };
+
+
   return (
     <div className="container">
       <h2>Registrati</h2>
@@ -37,6 +42,10 @@ const Register = () => {
         </div>
         <button type="submit" className="btn btn-primary">Registrati</button>
       </form>
+      <button className="btn btn-danger" onClick={handleGoogleLogin}>
+        Registrati con Google
+      </button>
+
     </div>
   );
 };

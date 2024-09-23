@@ -1,5 +1,5 @@
 import cron from 'node-cron';
-import RevokedToken from './models/RevokedToken.js';
+import RevokedToken from '../models/RevokedToken.js';
 
 // JOB performs expired token deletion every day at midnight
 cron.schedule('0 0 * * *', async () => {
