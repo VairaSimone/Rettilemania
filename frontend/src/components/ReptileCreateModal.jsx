@@ -3,8 +3,9 @@ import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import api from '../services/api';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../features/userSlice';
+import '../Style/ReptileCreateModal.css';
 
-const ReptileCreateModal = ({ show, handleClose, setReptiles }) => {
+const ReptileCreateModal = ({ show, handleClose, setReptiles, onSuccess }) => {
   const user = useSelector(selectUser);
 
   const [formData, setFormData] = useState({
@@ -88,6 +89,10 @@ const ReptileCreateModal = ({ show, handleClose, setReptiles }) => {
       setReptiles((prevReptiles) => [...prevReptiles, data]);
 
       handleClose();
+
+      if (onSuccess) {
+        onSuccess(data);
+      }
     } catch (err) {
       console.error('Error creating reptile:', err);
     }
@@ -95,8 +100,8 @@ const ReptileCreateModal = ({ show, handleClose, setReptiles }) => {
 
   return (
     <Modal show={show} onHide={handleClose} centered>
-      <Modal.Header closeButton>
-        <Modal.Title>Crea un nuovo rettile</Modal.Title>
+      <Modal.Header closeButton className="modal-header-custom">
+        <Modal.Title className="modal-title-custom">Crea un nuovo rettile</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit}>
@@ -108,6 +113,7 @@ const ReptileCreateModal = ({ show, handleClose, setReptiles }) => {
               placeholder="Inserisci il nome del rettile"
               value={formData.name}
               onChange={handleChange}
+              className="input-custom"
               required
             />
           </Form.Group>
@@ -120,6 +126,7 @@ const ReptileCreateModal = ({ show, handleClose, setReptiles }) => {
               placeholder="Inserisci la specie del rettile"
               value={formData.species}
               onChange={handleChange}
+              className="input-custom"
               required
             />
           </Form.Group>
@@ -132,6 +139,7 @@ const ReptileCreateModal = ({ show, handleClose, setReptiles }) => {
               placeholder="Inserisci il morph (opzionale)"
               value={formData.morph}
               onChange={handleChange}
+              className="input-custom"
             />
           </Form.Group>
 
@@ -140,8 +148,9 @@ const ReptileCreateModal = ({ show, handleClose, setReptiles }) => {
             <Form.Control
               type="file"
               name="image"
-              placeholder="Inserisci l'URL dell'immagine (opzionale)"
+              placeholder="Inserisci l'immagine (opzionale)"
               onChange={handleFileChange}
+              className="input-custom"
             />
           </Form.Group>
 
@@ -152,6 +161,7 @@ const ReptileCreateModal = ({ show, handleClose, setReptiles }) => {
               name="birthDate"
               value={formData.birthDate}
               onChange={handleChange}
+              className="input-custom"
             />
           </Form.Group>
 
@@ -168,7 +178,7 @@ const ReptileCreateModal = ({ show, handleClose, setReptiles }) => {
                     name="date"
                     value={record.date}
                     onChange={(e) => handleGrowthChange(index, e)}
-
+                    className="input-custom"
                   />
                 </Form.Group>
               </Col>
@@ -180,6 +190,7 @@ const ReptileCreateModal = ({ show, handleClose, setReptiles }) => {
                     name="weight"
                     value={record.weight}
                     onChange={(e) => handleGrowthChange(index, e)}
+                    className="input-custom"
                   />
                 </Form.Group>
               </Col>
@@ -191,12 +202,13 @@ const ReptileCreateModal = ({ show, handleClose, setReptiles }) => {
                     name="length"
                     value={record.length}
                     onChange={(e) => handleGrowthChange(index, e)}
+                    className="input-custom"
                   />
                 </Form.Group>
               </Col>
             </Row>
           ))}
-          <Button variant="secondary" onClick={addGrowthRecord} className="mt-2">
+          <Button variant="secondary" onClick={addGrowthRecord} className="mt-2 btn-custom">
             Aggiungi Record di Crescita
           </Button>
 
@@ -213,6 +225,7 @@ const ReptileCreateModal = ({ show, handleClose, setReptiles }) => {
                     name="date"
                     value={record.date}
                     onChange={(e) => handleHealthChange(index, e)}
+                    className="input-custom"
                   />
                 </Form.Group>
               </Col>
@@ -224,6 +237,7 @@ const ReptileCreateModal = ({ show, handleClose, setReptiles }) => {
                     name="note"
                     value={record.note}
                     onChange={(e) => handleHealthChange(index, e)}
+                    className="input-custom"
                   />
                 </Form.Group>
               </Col>
@@ -235,16 +249,17 @@ const ReptileCreateModal = ({ show, handleClose, setReptiles }) => {
                     name="vetVisit"
                     value={record.vetVisit}
                     onChange={(e) => handleHealthChange(index, e)}
+                    className="input-custom"
                   />
                 </Form.Group>
               </Col>
             </Row>
           ))}
-          <Button variant="secondary" onClick={addHealthRecord} className="mt-2">
+          <Button variant="secondary" onClick={addHealthRecord} className="mt-2 btn-custom">
             Aggiungi Record di Salute
           </Button>
 
-          <Button variant="primary" type="submit" className="mt-4">
+          <Button variant="primary" type="submit" className="mt-4 btn-save-custom">
             Salva Rettile
           </Button>
         </Form>

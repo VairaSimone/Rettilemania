@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
 import { Link, useParams } from 'react-router-dom';
+import '../Style/ReptileDetails.css'
 
 const ReptileDetails = () => {
   const { reptileId } = useParams();
@@ -26,48 +27,54 @@ const ReptileDetails = () => {
   if (!reptile) return <p>Rettile non trovato</p>;
 
   return (
-    <div className="container mt-4">
-      <Link className="nav-link" to="/home">Torna indietro</Link>
+    <div className="container mt-4 reptile-details-container">
+      <Link className="btn-back" to="/home">Torna indietro</Link>
 
-      <h2>{reptile.name}</h2>
-      <p><strong>Specie:</strong> {reptile.species}</p>
-      <p><strong>Morph:</strong> {reptile.morph || 'Non specificato'}</p>
-      <p><strong>Data di nascita:</strong> {new Date(reptile.birthDate).toLocaleDateString()}</p>
+      <h2 className="reptile-name">{reptile.name}</h2>
+      <div className="reptile-info">
+        <p><strong>Specie:</strong> {reptile.species}</p>
+        <p><strong>Morph:</strong> {reptile.morph || 'Non specificato'}</p>
+        <p><strong>Data di nascita:</strong> {new Date(reptile.birthDate).toLocaleDateString()}</p>
+      </div>
 
       {reptile.image && (
-        <div className="mb-3">
-          <img src={reptile.image} alt={reptile.name} className="img-fluid" style={{ maxWidth: '400px' }} />
+        <div className="reptile-image">
+          <img src={reptile.image} alt={reptile.name} className="img-fluid" />
         </div>
       )}
 
-      <h3>Record di Crescita</h3>
-      {reptile.growthRecords.length > 0 ? (
-        <ul>
-          {reptile.growthRecords.map((record, index) => (
-            <li key={index}>
-              <p><strong>Data:</strong> {new Date(record.date).toLocaleDateString()}</p>
-              <p><strong>Peso:</strong> {record.weight} grammi</p>
-              <p><strong>Lunghezza:</strong> {record.length} cm</p>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>Nessun record di crescita disponibile.</p>
-      )}
+      <div className="section">
+        <h3>Record di Crescita</h3>
+        {reptile.growthRecords.length > 0 ? (
+          <ul className="record-list">
+            {reptile.growthRecords.map((record, index) => (
+              <li key={index} className="record-item">
+                <p><strong>Data:</strong> {new Date(record.date).toLocaleDateString()}</p>
+                <p><strong>Peso:</strong> {record.weight} grammi</p>
+                <p><strong>Lunghezza:</strong> {record.length} cm</p>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="no-record">Nessun record di crescita disponibile.</p>
+        )}
+      </div>
 
-      <h3>Record di Salute</h3>
-      {reptile.healthRecords.length > 0 ? (
-        <ul>
-          {reptile.healthRecords.map((record, index) => (
-            <li key={index}>
-              <p><strong>Data visita veterinaria:</strong> {new Date(record.vetVisit).toLocaleDateString()}</p>
-              <p><strong>Note:</strong> {record.note || 'Nessuna nota disponibile'}</p>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>Nessun record di salute disponibile.</p>
-      )}
+      <div className="section">
+        <h3>Record di Salute</h3>
+        {reptile.healthRecords.length > 0 ? (
+          <ul className="record-list">
+            {reptile.healthRecords.map((record, index) => (
+              <li key={index} className="record-item">
+                <p><strong>Data visita veterinaria:</strong> {new Date(record.vetVisit).toLocaleDateString()}</p>
+                <p><strong>Note:</strong> {record.note || 'Nessuna nota disponibile'}</p>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="no-record">Nessun record di salute disponibile.</p>
+        )}
+      </div>
     </div>
   );
 };

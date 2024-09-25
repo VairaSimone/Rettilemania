@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import api from '../services/api';
+import '../Style/ReptileEditModal.css'; 
 
 const ReptileEditModal = ({ show, handleClose, reptile, setReptiles }) => {
   const [formData, setFormData] = useState({
@@ -82,8 +83,8 @@ const ReptileEditModal = ({ show, handleClose, reptile, setReptiles }) => {
   return (
 
     <Modal show={show} onHide={handleClose} centered>
-      <Modal.Header closeButton>
-        <Modal.Title>Modifica Rettile</Modal.Title>
+      <Modal.Header closeButton className="modal-header-custom">
+        <Modal.Title className="modal-title-custom">Modifica Rettile</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit}>
@@ -93,43 +94,64 @@ const ReptileEditModal = ({ show, handleClose, reptile, setReptiles }) => {
               type="text"
               name="name"
               placeholder="Inserisci il nome del rettile"
-              value={formData.name || ''} 
+              value={formData.name || ''}
               onChange={handleChange}
+              className="input-custom"
               required
             />
+          </Form.Group>
+
+          <Form.Group controlId="species">
+            <Form.Label>Specie</Form.Label>
             <Form.Control
               type="text"
               name="species"
               placeholder="Inserisci la specie del rettile"
               value={formData.species || ''}
               onChange={handleChange}
+              className="input-custom"
               required
             />
+          </Form.Group>
+
+          <Form.Group controlId="morph">
+            <Form.Label>Morph</Form.Label>
             <Form.Control
               type="text"
               name="morph"
               placeholder="Inserisci il morph"
-              value={formData.morph || ''} 
+              value={formData.morph || ''}
               onChange={handleChange}
+              className="input-custom"
             />
+          </Form.Group>
+
+          <Form.Group controlId="image">
+            <Form.Label>Immagine</Form.Label>
             <Form.Control
               type="text"
               name="image"
               placeholder="Inserisci il file del tuo rettile"
-              value={formData.image || ''} 
+              value={formData.image || ''}
               onChange={handleChange}
+              className="input-custom"
             />
+          </Form.Group>
+
+          <Form.Group controlId="birthDate">
+            <Form.Label>Data di nascita</Form.Label>
             <Form.Control
               type="date"
               name="birthDate"
-              value={formData.birthDate ? formData.birthDate.split('T')[0] : ''} 
+              value={formData.birthDate ? formData.birthDate.split('T')[0] : ''}
               onChange={handleChange}
+              className="input-custom"
             />
           </Form.Group>
 
           <hr />
 
-          <h5>Record di Crescita (Opzionale)</h5>
+          <h5 className="section-title">Record di Crescita (Opzionale)</h5>
           {formData.growthRecords.map((record, index) => (
             <Row key={index}>
               <Col md={4}>
@@ -140,6 +162,7 @@ const ReptileEditModal = ({ show, handleClose, reptile, setReptiles }) => {
                     name="date"
                     value={record.date ? record.date.split('T')[0] : ''}
                     onChange={(e) => handleGrowthChange(index, e)}
+                    className="input-custom"
                   />
                 </Form.Group>
               </Col>
@@ -149,8 +172,9 @@ const ReptileEditModal = ({ show, handleClose, reptile, setReptiles }) => {
                   <Form.Control
                     type="number"
                     name="weight"
-                    value={record.weight || ""}
+                    value={record.weight || ''}
                     onChange={(e) => handleGrowthChange(index, e)}
+                    className="input-custom"
                   />
                 </Form.Group>
               </Col>
@@ -162,18 +186,19 @@ const ReptileEditModal = ({ show, handleClose, reptile, setReptiles }) => {
                     name="length"
                     value={record.length}
                     onChange={(e) => handleGrowthChange(index, e)}
+                    className="input-custom"
                   />
                 </Form.Group>
               </Col>
             </Row>
           ))}
-          <Button variant="secondary" onClick={addGrowthRecord} className="mt-2">
+          <Button variant="secondary" onClick={addGrowthRecord} className="mt-2 btn-custom">
             Aggiungi Record di Crescita
           </Button>
 
           <hr />
 
-          <h5>Record di Salute (Opzionale)</h5>
+          <h5 className="section-title">Record di Salute (Opzionale)</h5>
           {formData.healthRecords.map((record, index) => (
             <Row key={index}>
               <Col md={4}>
@@ -184,6 +209,7 @@ const ReptileEditModal = ({ show, handleClose, reptile, setReptiles }) => {
                     name="date"
                     value={record.date ? record.date.split('T')[0] : ''}
                     onChange={(e) => handleHealthChange(index, e)}
+                    className="input-custom"
                   />
                 </Form.Group>
               </Col>
@@ -195,6 +221,7 @@ const ReptileEditModal = ({ show, handleClose, reptile, setReptiles }) => {
                     name="note"
                     value={record.note}
                     onChange={(e) => handleHealthChange(index, e)}
+                    className="input-custom"
                   />
                 </Form.Group>
               </Col>
@@ -206,16 +233,17 @@ const ReptileEditModal = ({ show, handleClose, reptile, setReptiles }) => {
                     name="vetVisit"
                     value={record.vetVisit ? record.vetVisit.split('T')[0] : ''}
                     onChange={(e) => handleHealthChange(index, e)}
+                    className="input-custom"
                   />
                 </Form.Group>
               </Col>
             </Row>
           ))}
-          <Button variant="secondary" onClick={addHealthRecord} className="mt-2">
+          <Button variant="secondary" onClick={addHealthRecord} className="mt-2 btn-custom">
             Aggiungi Record di Salute
           </Button>
 
-          <Button variant="primary" type="submit" className="mt-4">
+          <Button variant="primary" type="submit" className="mt-4 btn-save-custom">
             Salva Modifiche
           </Button>
         </Form>

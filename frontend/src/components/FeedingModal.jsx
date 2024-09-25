@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Table } from 'react-bootstrap';
 import api from '../services/api';
+import '../Style/FeedingModal.css'; 
 
 const FeedingModal = ({ show, handleClose, reptileId }) => {
   const [feedings, setFeedings] = useState([]);
@@ -64,8 +65,8 @@ const FeedingModal = ({ show, handleClose, reptileId }) => {
 
   return (
     <Modal show={show} onHide={handleClose} centered>
-      <Modal.Header closeButton>
-        <Modal.Title>Pasti dei Rettili</Modal.Title>
+      <Modal.Header closeButton className="modal-header-custom">
+        <Modal.Title className="modal-title-custom">Pasti dei Rettili</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit}>
@@ -76,6 +77,7 @@ const FeedingModal = ({ show, handleClose, reptileId }) => {
               name="date"
               value={formData.date}
               onChange={handleChange}
+              className="input-custom"
               required
             />
           </Form.Group>
@@ -87,6 +89,7 @@ const FeedingModal = ({ show, handleClose, reptileId }) => {
               name="foodType"
               value={formData.foodType}
               onChange={handleChange}
+              className="input-custom"
               required
             />
           </Form.Group>
@@ -98,6 +101,7 @@ const FeedingModal = ({ show, handleClose, reptileId }) => {
               name="quantity"
               value={formData.quantity}
               onChange={handleChange}
+              className="input-custom"
             />
           </Form.Group>
 
@@ -108,6 +112,7 @@ const FeedingModal = ({ show, handleClose, reptileId }) => {
               name="daysUntilNextFeeding"
               value={formData.daysUntilNextFeeding}
               onChange={handleChange}
+              className="input-custom"
               required
             />
           </Form.Group>
@@ -120,16 +125,17 @@ const FeedingModal = ({ show, handleClose, reptileId }) => {
               name="notes"
               value={formData.notes}
               onChange={handleChange}
+              className="input-custom"
             />
           </Form.Group>
 
-          <Button variant="primary" type="submit" className="mt-3">
+          <Button variant="primary" type="submit" className="mt-3 btn-custom">
             Aggiungi Pasto
           </Button>
         </Form>
 
-        <h5 className="mt-5">Cronologia dei Pasti</h5>
-        <Table striped bordered hover>
+        <h5 className="mt-5 title-custom">Cronologia dei Pasti</h5>
+        <Table striped bordered hover className="table-custom">
           <thead>
             <tr>
               <th>Data</th>
@@ -152,6 +158,7 @@ const FeedingModal = ({ show, handleClose, reptileId }) => {
                   <Button
                     variant="danger"
                     onClick={() => handleDelete(feeding._id)}
+                    className="btn-delete-custom"
                   >
                     Elimina
                   </Button>

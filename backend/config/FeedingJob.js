@@ -1,16 +1,8 @@
 import cron from 'node-cron';
 import Feeding from '../models/Feeding.js';
 import Notification from '../models/Notification.js';
-import nodemailer from 'nodemailer';
+import sgMail from '@sendgrid/mail';
 
-// Transport configuration for sending emails
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.MAIL_SECRET,
-    pass: process.env.ADDRESS_MAIL
-  }
-});
 
 // Function to normalize the date to midnight
 const normalizeDate = (date) => {
@@ -23,6 +15,7 @@ cron.schedule('0 0 * * *', async () => {
   console.log('JOB - Feeding Job');
 
   try {
+
     // Get the start and end of today in UTC
     const todayStart = normalizeDate(new Date());
     const todayEnd = new Date(todayStart);
@@ -92,15 +85,27 @@ cron.schedule('0 0 * * *', async () => {
       await notification.save();
 
       // Send summary email to user
-      const mailOptions = {
-        from: process.env.ADDRESS_MAIL,
-        to: user.email,
-        subject: 'Notifica di alimentazione rettili',
-        text: `Ciao ${user.name},\n\nI tuoi rettili ${reptileList} devono essere alimentati oggi.\n\nCordiali saluti,\nIl Team`
-      };
 
       try {
-        await transporter.sendMail(mailOptions);
+        // SENDGRID
+        sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+        const msg = {
+          to: user.email,
+          from: "simonevairavs@gmail.com",
+          subject: 'Notifica di alimentazione rettili',
+          text: `Ciao,\n\nI tuoi rettili devono essere alimentati oggi.\n\nCordiali saluti,\nIl Team`,
+          html: `<strong>Ciao ${user.name},\n\nI tuoi rettili ${reptileList} devono essere alimentati oggi.\n\nCordiali saluti,\nIl Team</strong>`,
+        }
+
+        sgMail
+          .send(msg)
+          .then(() => {
+            console.log('Email sent')
+          })
+          .catch((error) => {
+            console.error(error)
+          })
+
       } catch (err) {
         console.error(`Error sending email to ${user.email}:`, err);
       }

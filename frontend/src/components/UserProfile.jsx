@@ -3,6 +3,7 @@ import api from '../services/api';
 import { useDispatch } from 'react-redux';
 import { logoutUser } from '../features/userSlice';
 import { Link, useNavigate } from 'react-router-dom';
+import '../Style/UserProfile.css'; 
 
 const UserProfile = () => {
   const [user, setUser] = useState(null);
@@ -63,14 +64,22 @@ const UserProfile = () => {
 
   return (
 
-    <div className="container">
-      <Link className="nav-link" to="/home">Torna indietro</Link>
-
-      <h2>Profilo Utente</h2>
+    <div className="container profile-container mt-5">
+    <div className="card p-4 shadow-sm">
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h2 className="profile-title">Profilo Utente</h2>
+        <Link className="btn btn-outline-secondary" to="/home">Torna indietro</Link>
+      </div>
 
       {error && <p className="text-danger">{error}</p>}
 
-      <form onSubmit={handleUpdateProfile}>
+      <div className="text-center mb-4">
+        <img src={avatar || 'https://via.placeholder.com/150'} alt="Avatar" className="rounded-circle profile-avatar mb-3" />
+        <h5>{name}</h5>
+        <p className="text-muted">{email}</p>
+      </div>
+
+      <form onSubmit={handleUpdateProfile} className="mb-5">
         <div className="mb-3">
           <label>Nome</label>
           <input
@@ -92,7 +101,7 @@ const UserProfile = () => {
           />
         </div>
         <div className="mb-3">
-          <label>Password (lascia vuoto se non vuoi cambiare)</label>
+          <label>Password</label>
           <input
             type="password"
             className="form-control"
@@ -108,20 +117,21 @@ const UserProfile = () => {
             className="form-control"
             value={avatar}
             onChange={(e) => setAvatar(e.target.value)}
+            placeholder="Inserisci l'URL del tuo avatar"
           />
         </div>
-        <button type="submit" className="btn btn-primary">Aggiorna Profilo</button>
+        <button type="submit" className="btn btn-primary w-100">Aggiorna Profilo</button>
       </form>
 
       <hr />
 
-      <h3>Elimina Account</h3>
+      <h3 className="text-danger">Elimina Account</h3>
       <p className="text-danger">Attenzione! Questa azione è irreversibile.</p>
-      <button className="btn btn-danger" onClick={handleDeleteAccount}>
+      <button className="btn btn-danger w-100" onClick={handleDeleteAccount}>
         Elimina Account
       </button>
     </div>
-  );
+  </div>
+);
 };
-
 export default UserProfile;

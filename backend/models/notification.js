@@ -8,7 +8,7 @@ const notificationSchema = new Schema(
         message: { type: String, required: true },
         date: { type: Date, required: true },
         status: { type: String, enum: ['sent', 'pending'], default: 'pending' },
-        read: { type: Boolean, default: false },  // Nuovo campo per tracciare se è stata letta
+        read: { type: Boolean, default: false }, 
     },
     {
         collection: "Notification"

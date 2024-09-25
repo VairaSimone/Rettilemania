@@ -17,7 +17,7 @@ const reptileSchema = new Schema(
             type: String
         },
         birthDate: {
-            trype: Date
+            type: Date
         },
         user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
         feddingHistory: { type: mongoose.Schema.Types.ObjectId, ref: "Feeding" },

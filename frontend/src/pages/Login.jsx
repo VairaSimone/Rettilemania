@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { loginUser } from '../features/userSlice';
+import '../Style/Login.css';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -40,27 +41,51 @@ const Login = () => {
   };
 
   return (
-    <div className="container">
-      <h2>Login</h2>
+    <div className="login-container">
+    <div className="card p-4 shadow-lg login-card">
+      <h2 className="text-center mb-4">Accedi al tuo account</h2>
+
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
-          <label>Email</label>
-          <input type="email" className="form-control" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <label htmlFor="email" className="form-label">Email</label>
+          <input
+            type="email"
+            className="form-control"
+            id="email"
+            placeholder="Inserisci la tua email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
         </div>
+
         <div className="mb-3">
-          <label>Password</label>
-          <input type="password" className="form-control" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          <label htmlFor="password" className="form-label">Password</label>
+          <input
+            type="password"
+            className="form-control"
+            id="password"
+            placeholder="Inserisci la tua password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
         </div>
-        <button type="submit" className="btn btn-primary">Login</button>
+
+        <button type="submit" className="btn btn-primary w-100 mb-3">Accedi</button>
       </form>
 
-      <hr />
-      <button className="btn btn-danger" onClick={handleGoogleLogin}>
-        Login con Google
-      </button>
-      <Link className="btn" to="/register">Altrimenti registrati!</Link>
-    </div>
-  );
-};
+      <hr className="my-4" />
 
+      <button className="btn btn-outline-danger w-100 mb-3" onClick={handleGoogleLogin}>
+        <i className="bi bi-google me-2"></i>Accedi con Google
+      </button>
+
+      <p className="text-center">
+        <Link to="/register" className="btn btn-link">Non hai un account? Registrati qui</Link>
+      </p>
+    </div>
+  </div>
+);
+};
 export default Login;

@@ -6,7 +6,7 @@ const feedingSchema = new Schema(
         date: { type: Date, required: true },
         foodType: { type: String, required: true },
         quantity: { type: Number },
-        nextFeedingDate: { type: Date, required: true }, // Nuovo campo
+        nextFeedingDate: { type: Date, required: true }, 
         notes: { type: String }
     },
     {
